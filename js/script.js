@@ -105,9 +105,9 @@ player.addListener(
     const chords = player.data.songMap.chords;
     const currentChord =   chords.find(chord => chord.startTime <= position && position < chord.startTime + chord.duration);
     if (currentChord) {
-      console.log("Current chord:", currentChord.name);
+      /* console.log("Current chord:", currentChord.name);
       console.log(player.getValenceArousal(player.timer.position)["v"]);
-      console.log(player.getVocalAmplitude(player.timer.position));
+      console.log(player.getVocalAmplitude(player.timer.position)); */
       
       document.querySelector("#kanzyou").textContent = player.getValenceArousal(player.timer.position)["v"];
       document.querySelector("#code").textContent = currentChord.name;
@@ -116,8 +116,8 @@ player.addListener(
       }else{
         color = "yellow";
       }
-      long = (100-((player.getValenceArousal(player.timer.position)["v"]*100)/0.9)) + "%";
-      console.log(`long: ${(player.getValenceArousal(player.timer.position)["v"]*100)/0.9}`)
+      long = (((player.getValenceArousal(player.timer.position)["v"]*100)/65)*100) + "%";
+      console.log(`long: ${(player.getValenceArousal(player.timer.position)["v"]*100)/65*100}`)
       document.getElementById("section").style.background = `linear-gradient(white  ${long},${color})`
     }
     /* if (notes) {
