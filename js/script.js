@@ -1,37 +1,51 @@
 const { Player } = TextAliveApp;
 
-/* const animatedWord = function (now,unit){
-  if(unit.contains(now)){
-    document.querySelector("#text").textContent = unit.text;
-  }
-}; */
+const text_get_line = (linedata,currentChord) => {
+  var text_line = "";//行の歌詞取得用変数
+  var pre_lang = "";//前回の言語を保持するための変数
 
-const animateWord = (now, unit) => {
-  if (unit.contains(now)) {
-    document.querySelector("#ryli").textContent = unit.text;
-  }
-};
+  linedata._data.words.forEach(element => {
+    var worda = "";//単語を作るための変数
+    element.characters.forEach(element2 => {
+      worda = worda + element2.char;
+    });
+
+    //2単語が連続して英語の時はスペースを入れる
+    if(element.language == pre_lang && pre_lang == "en"){
+      text_line = text_line + " " + worda;  
+    }else{
+      text_line = text_line + worda;
+    }
+
+    //1個前の単語の言語として代入
+    pre_lang = element.language;
+});
+  
+  return text_line;
+}
 
 const player = new Player({
   // トークンは https://developer.textalive.jp/profile で取得したものを使う
   app: { token: "lk6HkxIEwJqCRJis" },
   /* mediaElement: document.querySelector("#media"), */
-  mediaBannerPosition: "bottom right"
+  mediaBannerPosition: "bottom right",
+  valenceArousalEnabled:1,
+  vocalAmplitudeEnabled:1
 
   // オプション一覧
   // https://developer.textalive.jp/packages/textalive-app-api/interfaces/playeroptions.html
 });
+
+let previousLine = null;  // 前回の行情報を保持する変数
+let previousStartTime = null;  // 前回の行の発声開始時間を保持する変数
 
 
 player.addListener(
   {
     onAppReady(app) {
       if (app.managed) {
-        /* document.querySelector("#control").className = "disabled"; */
       }
       if (!app.songUrl) {
-        /* document.querySelector("#media").className = "disabled"; */
-  
         player.createFromSongUrl("https://piapro.jp/t/hZ35/20240130103028", {
           video: {
             // 音楽地図訂正履歴
@@ -79,22 +93,60 @@ player.addListener(
   onTimerReady() {
     document.querySelector("#word").textContent = "準備完了";
     document.querySelector("#ryli").textContent = "";
-    /* overlay.className = "disabled"; */
-    /* document.querySelector("#control > a#play").className = "";
-    document.querySelector("#control > a#stop").className = ""; */
   },
   onPlay() {
-    /* document.querySelector("#ryli").textContent = "再生開始"; */
     let w = player.video.firstWord;
-    console.log(w);
-      while (w) {
-        /* console.log(w); */
-          /* document.querySelector("#ryli").textContent = w; */
-          w.animate = animateWord;
-          w = w.next;
-      }
   },
+  onTimeUpdate: (position) => {
+    // 現在の再生位置に対応する歌詞の行を取得
+    const currentChar = player.video.findChar(position+200);//現在の200ms先を取得
+    const beat = player.findBeat(position+200);
+    /* console.log(player.data.songMap.chords); */
+    const chords = player.data.songMap.chords;
+    const currentChord =   chords.find(chord => chord.startTime <= position && position < chord.startTime + chord.duration);
+    if (currentChord) {
+      console.log("Current chord:", currentChord.name);
+      console.log(player.getValenceArousal(player.timer.position)["v"]);
+      console.log(player.getVocalAmplitude(player.timer.position));
+      
+      document.querySelector("#kanzyou").textContent = player.getValenceArousal(player.timer.position)["v"];
+      document.querySelector("#code").textContent = currentChord.name;
+      if(currentChord.name[0] == "F"){
+        color = "pink";
+      }else{
+        color = "yellow";
+      }
+      long = (100-((player.getValenceArousal(player.timer.position)["v"]*100)/0.9)) + "%";
+      console.log(`long: ${(player.getValenceArousal(player.timer.position)["v"]*100)/0.9}`)
+      document.getElementById("section").style.background = `linear-gradient(white  ${long},${color})`
+    }
+    /* if (notes) {
+      const currentNotes = notes.filter(note => note.startTime <= position && note.endTime >= position);
+      currentNotes.forEach(note => {
+        console.log(`Note: pitch=${note.pitch}, startTime=${note.startTime}, endTime=${note.endTime}`);
+      });
+    } */
+    
+    /* console.log(player.getValenceArousal(player.timer.position));
+    console.log(player.getVocalAmplitude(player.timer.position)); */
+    if (currentChar) {
+      const currentLine = currentChar.parent.parent;
+      const currentStartTime = currentLine.startTime;
+      if(currentLine !== previousLine && currentStartTime !== previousStartTime){
+        document.querySelector("#onryou").textContent = player.getVocalAmplitude(player.timer.position);
+        console.log(currentChar);//データはここにある
+        now_line = text_get_line(currentLine);//発声中の行の歌詞取得
+        next_line = text_get_line(currentLine.next);//次のぎょうの歌詞取得
+        console.log(`Current line: ${now_line}`);//発声中の行の歌詞表示(コンソール)
+        document.querySelector("#ryli").textContent = now_line;//発声中の行の歌詞表示
+        document.querySelector("#ryli_n").textContent = next_line;//次の行の歌詞表示
+        previousLine = currentLine;  // 前回の行情報を更新
+        previousStartTime = currentStartTime;  // 前回の発声開始時間を更新
 
+        
+    }
+  }
+  },
 
 
   // 動画オブジェクトの準備が整ったとき（楽曲に関する情報を読み込み終わったとき）に呼ばれる
