@@ -2,12 +2,68 @@ body{
     position: relative;
 }
 section{
+    width: 960px;
+    height: 360px;
     position: relative;
     z-index: 2;
-    background: linear-gradient(white,yellow);
+    /* background: linear-gradient(white,yellow); */
+    background:linear-gradient(white,rgb(255, 255, 0));
+    border: 16px solid black;
+    border-style: ridge;
 }
 canvas{
     position: absolute;
     top: 0;
     z-index: 1;
+}
+@font-face {
+    font-family: "genei";
+    src: url("../GenEi-P-Heavy_ver8.ttf") format("truetype");
+  }
+  @font-face {
+    font-family: "shirofuku";
+    src: url("../CHI_Shirofuku-G2.otf") format("opentype");
+  }
+
+
+.ryli{
+    width: 100%;
+    text-align: center;
+    color: rgb(182, 194, 18);
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    transform: translateY(50%) translateX(-50%);
+    font-size: 40px;
+    font-family: "genei";
+    opacity: 0;
+}
+.rin{
+    transform: translateY(50%) translateX(0px);
+    opacity: 0;
+    animation: rin 0.1s linear forwards;
+}
+.rout{
+    opacity: 1;
+    animation: rout 0.1s linear forwards;
+}
+@keyframes rin{
+    0%{
+        transform: translateY(50%) translateX(30px);
+        opacity: 0;
+    }
+    100%{
+        transform: translateY(50%) translateX(-50%);
+        opacity: 1;
+    }
+}
+@keyframes rout{
+    0%{
+        transform: translateY(50%) translateX(-50%);
+        opacity: 1;
+    }
+    100%{
+        transform: translateY(50%) translateX(-990px);
+        opacity: 0;
+    }
 }
