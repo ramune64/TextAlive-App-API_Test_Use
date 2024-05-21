@@ -7,7 +7,7 @@ section{
     position: relative;
     z-index: 2;
     /* background: linear-gradient(white,yellow); */
-    background:linear-gradient(white,rgb(255, 255, 0));
+    /* background:linear-gradient(white,rgb(255, 255, 0)); */
     border: 16px solid black;
     border-style: ridge;
 }
@@ -32,9 +32,9 @@ canvas{
     color: rgb(182, 194, 18);
     position: absolute;
     left: 50%;
-    bottom: 10px;
+    bottom: 40px;
     transform: translateY(50%) translateX(-50%);
-    font-size: 40px;
+    font-size: 35px;
     font-family: "genei";
     opacity: 0;
 }

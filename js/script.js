@@ -120,26 +120,26 @@ player.addListener(
       if(currentChord.name[0] == "A"){
         color = "rgb(255, 255, 0)";
       }else if(currentChord.name[0] == "B"){
-        color = "rgb(255, 250, 0)";
+        color = "rgb(255, 250, 5)";
       }else if(currentChord.name[0] == "C"){
-        color = "rgb(255, 245, 0)";
+        color = "rgb(255, 245, 10)";
       }else if(currentChord.name[0] == "D"){
-        color = "rgb(255, 240, 0)";
+        color = "rgb(255, 240, 15)";
       }else if(currentChord.name[0] == "E"){
-        color = "rgb(255, 235, 0)";
+        color = "rgb(255, 235, 20)";
       }else if(currentChord.name[0] == "F"){
-        color = "rgb(255, 230, 0)";
+        color = "rgb(255, 230, 25)";
       }else if(currentChord.name[0] == "G"){
-        color = "rgb(255, 225, 0)";
+        color = "rgb(255, 225, 30)";
       }else{
       }
       //console.log(player.getValenceArousal(player.timer.position));
       //long = (100-(((player.getValenceArousal(player.timer.position)["a"]*100)-30)*10)+0) + "%";
-      //long =100- map_value(player.getValenceArousal(player.timer.position)["v"]*100-22,0,10,0,100);
-      long =100- (player.getValenceArousal(player.timer.position)["v"] + player.getValenceArousal(player.timer.position)["a"])*100
-      /* if(player.findChorus(player.timer.position) !== null){
+      long =100- map_value(player.getValenceArousal(player.timer.position)["a"]*100-31,0,15,0,100);
+      //long =100- (player.getValenceArousal(player.timer.position)["v"] + player.getValenceArousal(player.timer.position)["a"])*100
+      if(player.findChorus(player.timer.position) !== null){
         long -= 10;
-      } */
+      }
       console.log(`long: ${long}`)
       document.getElementById("section").style.background = `linear-gradient(rgba(0,0,0,0) ${long}%,${color})`
     }
