@@ -45,7 +45,7 @@ let previousStartTime = null;  // 前回の行の発声開始時間を保持す�
 let line_counter = 0;
 const ryli = document.getElementById("ryli");
 const ryli_n = document.getElementById("ryli_n");
-
+let prev_beat = 0;
 
 
 player.addListener(
@@ -93,6 +93,7 @@ player.addListener(
     // 楽曲情報を表示
     document.querySelector("#text").textContent = player.data.song.artist.name;
     document.querySelector("#text").textContent += player.data.song.name;
+    console.log(player)
 
     // 最後に取得した再生時刻の情報をリセット
     lastTime = 1;
@@ -107,7 +108,7 @@ player.addListener(
   onTimeUpdate: (position) => {
     // 現在の再生位置に対応する歌詞の行を取得
     const currentChar = player.video.findChar(position+300);//現在の300ms先を取得
-    const beat = player.findBeat(position+200);
+    
     /* console.log(player.data.songMap.chords); */
     const chords = player.data.songMap.chords;
     const currentChord =   chords.find(chord => chord.startTime <= position && position < chord.startTime + chord.duration);
@@ -140,7 +141,14 @@ player.addListener(
       if(player.findChorus(player.timer.position) !== null){
         long -= 10;
       }
-      console.log(`long: ${long}`)
+      const beat = player.findBeat(position+100);
+      //console.log(beat);
+      now_beat = beat.index
+      if(now_beat != prev_beat){
+        long -= 20;
+      }
+      prev_beat = now_beat;
+      //console.log(`long: ${long}`)
       document.getElementById("section").style.background = `linear-gradient(rgba(0,0,0,0) ${long}%,${color})`
     }
     /* if (notes) {
