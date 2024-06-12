@@ -101,13 +101,17 @@ player.addListener(
 
   onTimerReady() {
     document.querySelector("#word").textContent = "準備完了";
+    now_line = "";
+    const currentChar = player.video.findChar(0);
   },
   onPlay() {
     let w = player.video.firstWord;
   },
   onTimeUpdate: (position) => {
+    //console.log(position);
     // 現在の再生位置に対応する歌詞の行を取得
     const currentChar = player.video.findChar(position+300);//現在の300ms先を取得
+    //console.log(currentChar)
     
     /* console.log(player.data.songMap.chords); */
     const chords = player.data.songMap.chords;
@@ -163,12 +167,15 @@ player.addListener(
     if (currentChar) {
       const currentLine = currentChar.parent.parent;
       const currentStartTime = currentLine.startTime;
+      
+      
       if(currentLine !== previousLine && currentStartTime !== previousStartTime){
+        //console.log(currentStartTime);
         //document.querySelector("#onryou").textContent = player.getVocalAmplitude(player.timer.position);
         console.log(currentChar);//データはここにある
         now_line = text_get_line(currentLine);//発声中の行の歌詞取得
-        next_line = text_get_line(currentLine.next);//次のぎょうの歌詞取得
         console.log(`Current line: ${now_line}`);//発声中の行の歌詞表示(コンソール)
+        
 
         line_counter += 1;
         if(line_counter%2 == 1){
@@ -229,6 +236,7 @@ let p_s = 0;
 function p_start(){
   if(p_s == 0){
     console.log("start!!");
+    player.requestMediaSeek(0);
     player.requestPlay();
     starts.textContent = "止めよか";
     p_s = 1;
